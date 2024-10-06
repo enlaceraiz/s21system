@@ -1,0 +1,64 @@
+-- Consultas para verificar los datos de ejemplo insertados en las tablas
+
+-- 1. Consultar todos los usuarios registrados
+SELECT * FROM usuarios;
+
+-- 2. Consultar los profesores disponibles y su nivel de experiencia
+SELECT usuario, nivel_experiencia, nivel_idioma, correo, telefono FROM profesores;
+
+-- 3. Consultar las clases programadas por un alumno específico
+SELECT * FROM clases WHERE alumno_id = 1;
+
+-- 4. Consultar la disponibilidad de un profesor
+SELECT * FROM disponibilidad_profesor WHERE profesor_id = 1;
+
+-- 5. Consultar el historial de clases de un alumno
+SELECT * FROM historial_clases WHERE alumno_id = 1;
+
+-- 6. Consultar la autoevaluación de un usuario
+SELECT * FROM autoevaluacion WHERE usuario_id = 1;
+
+-- 7. Consultar los roles asignados a un usuario específico
+SELECT * FROM usuario_roles WHERE usuario_id = 1;
+
+-- 8. Consultar todas las solicitudes de reprogramación pendientes
+SELECT * FROM solicitudes_reprogramacion WHERE estado = 'Pendiente';
+
+-- 9. Consultar las comunicaciones realizadas para una clase específica
+SELECT * FROM comunicaciones WHERE clase_id = 1;
+
+-- 10. Consultar la asignación de profesores a alumnos
+SELECT * FROM asignacion_profesores;
+
+
+-- Eliminación de datos de ejemplo
+
+-- 1. Eliminar un usuario específico
+DELETE FROM usuarios WHERE usuario = 'juan.perez';
+
+-- 2. Eliminar un profesor específico
+DELETE FROM profesores WHERE usuario = 'juan.gomez';
+
+-- 3. Eliminar todas las clases de un alumno específico
+DELETE FROM clases WHERE alumno_id = 1;
+
+-- 4. Eliminar la disponibilidad de un profesor
+DELETE FROM disponibilidad_profesor WHERE profesor_id = 1;
+
+-- 5. Eliminar un registro del historial de clases
+DELETE FROM historial_clases WHERE clase_id = 1;
+
+-- 6. Eliminar la autoevaluación de un usuario
+DELETE FROM autoevaluacion WHERE usuario_id = 1;
+
+-- 7. Eliminar un rol asignado a un usuario
+DELETE FROM usuario_roles WHERE usuario_id = 1 AND rol_id = 1;
+
+-- 8. Eliminar una solicitud de reprogramación específica
+DELETE FROM solicitudes_reprogramacion WHERE id = 1;
+
+-- 9. Eliminar una comunicación específica
+DELETE FROM comunicaciones WHERE id = 1;
+
+-- 10. Eliminar una asignación de profesor a un alumno
+DELETE FROM asignacion_profesores WHERE alumno_id = 1 AND profesor_id = 1;

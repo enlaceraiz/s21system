@@ -1,0 +1,127 @@
+CREATE DATABASE sistema_autogestion_horas;
+USE sistema_autogestion_horas;
+
+-- Tabla para almacenar los usuarios
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario VARCHAR(100) NOT NULL UNIQUE,
+    contrasena VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    nivel_idioma VARCHAR(50),
+    correo VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20)
+);
+
+-- Tabla para almacenar los profesores
+CREATE TABLE profesores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario VARCHAR(100) NOT NULL UNIQUE,
+    contrasena VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    cv BLOB,
+    nivel_experiencia VARCHAR(50),
+    nivel_idioma VARCHAR(50),
+    correo VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20)
+);
+
+-- Tabla para almacenar las clases
+CREATE TABLE clases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    alumno_id INT NOT NULL,
+    profesor_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    estado VARCHAR(50) NOT NULL,
+    duracion VARCHAR(20),
+    FOREIGN KEY (alumno_id) REFERENCES usuarios(id),
+    FOREIGN KEY (profesor_id) REFERENCES profesores(id)
+);
+
+-- Tabla para almacenar la disponibilidad de los profesores
+CREATE TABLE disponibilidad_profesor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    profesor_id INT NOT NULL,
+    dia_semana VARCHAR(20) NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+    FOREIGN KEY (profesor_id) REFERENCES profesores(id)
+);
+
+-- Tabla para el historial de clases
+CREATE TABLE historial_clases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    clase_id INT NOT NULL,
+    alumno_id INT NOT NULL,
+    profesor_id INT NOT NULL,
+    fecha DATE NOT NULL,
+    hora TIME NOT NULL,
+    duracion VARCHAR(20),
+    comentario TEXT,
+    FOREIGN KEY (clase_id) REFERENCES clases(id),
+    FOREIGN KEY (alumno_id) REFERENCES usuarios(id),
+    FOREIGN KEY (profesor_id) REFERENCES profesores(id)
+);
+
+-- Tabla para la autoevaluación de nivel de idioma
+CREATE TABLE autoevaluacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    nivel VARCHAR(50) NOT NULL,
+    fecha DATE NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+-- Tabla para almacenar roles de usuario
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+-- Tabla para la asignación de roles a los usuarios
+CREATE TABLE usuario_roles (
+    usuario_id INT NOT NULL,
+    rol_id INT NOT NULL,
+    PRIMARY KEY (usuario_id, rol_id),
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+    FOREIGN KEY (rol_id) REFERENCES roles(id)
+);
+
+-- Tabla para las solicitudes de reprogramación de clases
+CREATE TABLE solicitudes_reprogramacion (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    clase_id INT NOT NULL,
+    alumno_id INT NOT NULL,
+    nueva_fecha DATE NOT NULL,
+    nueva_hora TIME NOT NULL,
+    estado VARCHAR(50) NOT NULL DEFAULT 'Pendiente',
+    FOREIGN KEY (clase_id) REFERENCES clases(id),
+    FOREIGN KEY (alumno_id) REFERENCES usuarios(id)
+);
+
+-- Tabla para las comunicaciones entre alumnos y profesores
+CREATE TABLE comunicaciones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    clase_id INT NOT NULL,
+    remitente_id INT NOT NULL,
+    mensaje TEXT NOT NULL,
+    fecha_envio DATETIME NOT NULL,
+    FOREIGN KEY (clase_id) REFERENCES clases(id),
+    FOREIGN KEY (remitente_id) REFERENCES usuarios(id)
+);
+
+-- Tabla para almacenar la asignación de profesores a alumnos (máximo 3)
+CREATE TABLE asignacion_profesores (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    alumno_id INT NOT NULL,
+    profesor_id INT NOT NULL,
+    fecha_asignacion DATE NOT NULL,
+    UNIQUE (alumno_id, profesor_id),
+    FOREIGN KEY (alumno_id) REFERENCES usuarios(id),
+    FOREIGN KEY (profesor_id) REFERENCES profesores(id)
+);
+
+-- Índices para mejorar la eficiencia de las consultas
+CREATE INDEX idx_usuario_id ON clases (alumno_id);
+CREATE INDEX idx_profesor_disponible ON profesores (nivel_experiencia, nivel_idioma);
+CREATE INDEX idx_disponibilidad_profesor ON disponibilidad_profesor (profesor_id, dia_semana);
